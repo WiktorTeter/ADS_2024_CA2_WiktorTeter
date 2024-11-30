@@ -1,5 +1,6 @@
 #include <iostream>
 #include "BinaryTree.h"
+#include "TreeMap.h"
 
 int main() {
     BinaryTree<int> tree;
@@ -13,5 +14,17 @@ int main() {
     tree.printPreOrder();
     tree.printPostOrder();
     std::cout << "Tree Count: " << tree.count() << std::endl;
+
+    TreeMap<int, std::string> map;
+
+    map.put(1, "One");
+    map.put(2, "Two");
+
+    std::cout << "Key 1: " << map.get(1) << std::endl;
+    std::cout << "Key 2: " << map.get(2) << std::endl;
+
+    std::cout << "Contains Key 1: " << map.containsKey(1) << std::endl;
+    std::cout << "Contains Key 3: " << map.containsKey(3) << std::endl;
+
     return 0;
 }
