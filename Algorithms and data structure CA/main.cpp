@@ -9,6 +9,10 @@
 #include <map>
 #include <iomanip>
 
+void testTreeMap();
+void testBinaryTree();
+void testFilterData();
+
 struct Person {
     int id;
     std::string first_name;
@@ -184,6 +188,16 @@ int main() {
 
     std::cout << "Contains Key 1: " << map.containsKey(1) << std::endl;
     std::cout << "Contains Key 3: " << map.containsKey(3) << std::endl;
+
+    std::cout << "=== Running Tests ===\n";
+
+    testTreeMap();
+
+    testBinaryTree();
+
+    testFilterData();
+
+    std::cout << "=== All Tests Complete ===\n";
 
     TreeMap<char, BinaryTree<std::string>> wordMap;
 
