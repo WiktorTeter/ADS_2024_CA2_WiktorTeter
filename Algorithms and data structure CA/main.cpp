@@ -6,6 +6,8 @@
 #include <sstream>
 #include <cctype>
 #include <stdexcept>
+#include <map>
+#include <iomanip>
 
 struct Person {
     int id;
@@ -23,7 +25,6 @@ std::vector<Person> readCSV(const std::string& filename) {
     }
 
     std::string line;
-    // Skip the header row
     std::getline(file, line);
 
     while (std::getline(file, line)) {
@@ -31,7 +32,6 @@ std::vector<Person> readCSV(const std::string& filename) {
         Person person;
 
         std::string id;
-        // Parse each column
         std::getline(ss, id, ',');
         person.id = std::stoi(id);
 
@@ -69,6 +69,63 @@ void searchByField(const std::vector<Person>& people, const std::string& field, 
         std::cout << "No results found for the given field and value." << std::endl;
     }
 }
+void createIndex(const std::vector<Person>& people, const std::string& field) {
+    std::map<std::string, int> index;
+
+    for (const auto& person : people) {
+        std::string key;
+        if (field == "id") key = std::to_string(person.id);
+        else if (field == "first_name") key = person.first_name;
+        else if (field == "last_name") key = person.last_name;
+        else if (field == "email") key = person.email;
+        else if (field == "gender") key = person.gender;
+        else {
+            std::cout << "Invalid field." << std::endl;
+            return;
+        }
+
+        index[key]++;
+    }
+
+    std::cout << std::setw(20) << "Value" << std::setw(10) << "Count" << std::endl;
+    std::cout << std::string(30, '-') << std::endl;
+    for (const auto& entry : index) {
+        std::cout << std::setw(20) << entry.first << std::setw(10) << entry.second << std::endl;
+    }
+}
+void filterData(const std::vector<Person>& people, const std::string& field, const std::string& value) {
+    bool found = false;
+
+    std::cout << std::setw(5) << "ID"
+        << std::setw(15) << "First Name"
+        << std::setw(15) << "Last Name"
+        << std::setw(25) << "Email"
+        << std::setw(10) << "Gender"
+        << std::endl;
+    std::cout << std::string(70, '-') << std::endl;
+
+    for (const auto& person : people) {
+        if ((field == "id" && std::to_string(person.id) == value) ||
+            (field == "first_name" && person.first_name == value) ||
+            (field == "last_name" && person.last_name == value) ||
+            (field == "email" && person.email == value) ||
+            (field == "gender" && person.gender == value)) {
+
+            std::cout << std::setw(5) << person.id
+                << std::setw(15) << person.first_name
+                << std::setw(15) << person.last_name
+                << std::setw(25) << person.email
+                << std::setw(10) << person.gender
+                << std::endl;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        std::cout << "No matching results found." << std::endl;
+    }
+}
+
 
 void readFileToTreeMap(const std::string& filename, TreeMap<char, BinaryTree<std::string>>& wordMap) {
     std::ifstream file(filename);
@@ -147,18 +204,45 @@ int main() {
     }
 
     try {
+ 
         std::vector<Person> people = readCSV("data.csv");
 
-        std::cout << "Enter field to search by (id, first_name, last_name, email, gender): ";
-        std::string field;
-        std::cin >> field;
 
-        std::cout << "Enter value to search for: ";
-        std::string value;
-        std::cin.ignore();
-        std::getline(std::cin, value);
+        while (true) {
+            std::cout << "\nOptions:\n"
+                << "1. Create an index by a field\n"
+                << "2. View data for a specific field and value\n"
+                << "3. Exit\n"
+                << "Enter your choice: ";
+            int choice;
+            std::cin >> choice;
 
-        searchByField(people, field, value);
+            if (choice == 1) {
+                std::cout << "Enter field to create an index (id, first_name, last_name, email, gender): ";
+                std::string field;
+                std::cin >> field;
+
+                createIndex(people, field);
+            }
+            else if (choice == 2) {
+                std::cout << "Enter field to filter by (id, first_name, last_name, email, gender): ";
+                std::string field;
+                std::cin >> field;
+
+                std::cout << "Enter value to filter by: ";
+                std::string value;
+                std::cin.ignore(); 
+                std::getline(std::cin, value);
+
+                filterData(people, field, value);
+            }
+            else if (choice == 3) {
+                break;
+            }
+            else {
+                std::cout << "Invalid choice. Please try again." << std::endl;
+            }
+        }
 
     }
     catch (const std::exception& e) {
