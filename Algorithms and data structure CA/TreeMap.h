@@ -16,6 +16,7 @@ public:
     int size();
     void clear();
     bool removeKey(K key);
+    BinaryTree<K> keySet();
     V& operator[](K key);
 };
 template <class K, class V>
@@ -53,4 +54,15 @@ bool TreeMap<K, V>::removeKey(K key) {
 	keys.remove(key);
 	values.erase(key);
 	return true;
+}
+template <class K, class V>
+BinaryTree<K> TreeMap<K, V>::keySet() {
+    return keys;
+}
+template <class K, class V>
+V& TreeMap<K, V>::operator[](K key) {
+    if (!values.count(key)) {
+        throw std::logic_error("Key not found");
+    }
+    return values[key];
 }
